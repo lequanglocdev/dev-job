@@ -1,6 +1,15 @@
 // import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
+
 export const Home = () => {
+
+   const navigate = useNavigate();
+
+   const handleSwitchAuth = () => {
+     navigate("/sign-in");
+   };
   // const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
   //   if (!credentialResponse.credential) {
   //     console.error("Không nhận được token từ Google");
@@ -37,6 +46,9 @@ export const Home = () => {
   //   </div>
   // );
   return(
-    <div>Home</div>
+    <div>Home
+      <Button onClick={handleSwitchAuth} variant={"default"}>Login</Button>
+    </div>
+    
   )
 };
