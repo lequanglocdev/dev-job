@@ -1,10 +1,11 @@
 import { createBrowserRouter, Outlet, RouteObject, RouterProvider } from "react-router-dom";
 import { MainLayout } from "./layouts/mainlayout/MainLayout";
 import { Home } from "./pages/home/Home";
-import { Contact } from "./pages/contact/Contact";
-// import SignInPage from "./pages/signIn/SignInPage";
-// import SignUpPage from "./pages/signUp/SignUpPage";
-import { Auth } from "./components/input/Auth";
+import { Contact } from "@/pages/contact/Contact";
+import SignIn from "@/pages/auth/signIn/SignIn";
+import SignUp from "@/pages/auth/signUp/SignUp";
+import ForgotPassword from "@/pages/auth/forgotPassword/ForgotPassword";
+import ResetPassword from "./pages/auth/resetPassword/ResetPassword";
 
 function App() {
 
@@ -29,17 +30,26 @@ function App() {
     },
     {
       path: "/sign-in",
-      element: <Auth/>,
+      element: <SignIn />,
     },
     {
       path: "/sign-up",
-      element: <Auth />,
+      element: <SignUp />,
+    },
+    {
+      path: "/forgot-password",
+      element: <ForgotPassword />,
+    },
+    {
+      path: "/reset-password",
+      element: <ResetPassword />,
     },
   ];
 
   const route = createBrowserRouter([
     {
       element:(
+        
         <Outlet/>
       ),
       children: appRouter
@@ -48,8 +58,7 @@ function App() {
 
   return (
     <RouterProvider router={route}/>
-
-   
+    
   );
 }
 
