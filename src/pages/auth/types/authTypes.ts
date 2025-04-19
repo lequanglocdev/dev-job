@@ -24,6 +24,7 @@ export type RegisterData = {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
   age: number;
   phone: string;
   address: string;
@@ -37,4 +38,9 @@ export type ForgotPassword = {
 export type VerifyEmailData ={
   email: string;
   verificationCode: string;
+}
+
+export type ResetPassword = {
+  forgotPasswordToken: string;
+  newPassword: string
 }

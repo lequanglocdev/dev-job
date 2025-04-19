@@ -13,8 +13,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/app/store";
 import {
   forgotPasswordUser,
   verifyEmaildUser,
@@ -45,15 +45,16 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [otpEnabled, setOtpEnabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
 
   const handleSwitchAuth = () => {
     navigate("/sign-in");
   };
 
   const dispatch = useDispatch<AppDispatch>();
-  const { loading } = useSelector((state: RootState) => state.auth);
-
   const handleSendMail = form.handleSubmit(async (data) => {
+    setSendingOtp(true);
     try {
       await dispatch(forgotPasswordUser({ email: data.email })).unwrap();
       setOtpEnabled(true); // Bật ô nhập OTP sau khi gửi thành công
@@ -62,23 +63,36 @@ const ForgotPassword = () => {
     } catch (err) {
       const errorMessage = typeof err === "string" ? err : "Failed to send OTP";
       toast.error(errorMessage);
+    } finally {
+      setSendingOtp(false);
     }
   });
 
   const handleVerifyOtp = form.handleSubmit(async (data) => {
+    setVerifyingOtp(true);
     try {
-      await dispatch(
+      const result = await dispatch(
         verifyEmaildUser({
           email: data.email,
           verificationCode: data.verificationCode,
         })
       ).unwrap();
-      toast.success("OTP verified successfully!");
-      navigate("/reset-password");
+      toast.success("OTP verified successfully!"); 
+
+      console.log(
+        "Result khi verify OTP xong:",
+        result.result.forgotPasswordToken
+      ); 
+
+      navigate("/reset-password", {
+        state: { forgotPasswordToken: result.result.forgotPasswordToken },
+      });
     } catch (err) {
       const errorMessage =
         typeof err === "string" ? err : "Invalid OTP, please try again.";
       toast.error(errorMessage);
+    } finally {
+      setVerifyingOtp(false);
     }
   });
 
@@ -104,13 +118,13 @@ const ForgotPassword = () => {
           Enter your email, and we will send you a password recovery code.
         </p>
         <Form {...form}>
-          <form className="w-full space-y-4 p-6">
+          <form className="w-full space-y-4 p-6 overflow-hidden">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel className="text-white font-medium">
+                  <FormLabel className="text-white font-normal">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -129,7 +143,7 @@ const ForgotPassword = () => {
               control={form.control}
               name="verificationCode"
               render={({ field }) => (
-                <FormItem className="relative w-full">
+                <FormItem className="relative w-full flex justify-center items-center overflow-hidden">
                   <FormControl>
                     <Input
                       type="text"
@@ -138,7 +152,7 @@ const ForgotPassword = () => {
                       disabled={!otpEnabled}
                       className={`${
                         !otpEnabled
-                          ? "bg-gray-500 text-white"
+                          ? "bg-gray-600 text-white"
                           : "bg-white text-black"
                       }`}
                     />
@@ -150,18 +164,34 @@ const ForgotPassword = () => {
                         ? "bg-gray-400 text-white"
                         : "bg-[#009196] text-white"
                     }`}
-                    disabled={countdown > 0 || !form.watch("email")}
+                    disabled={
+                      countdown > 0 || !form.watch("email") || sendingOtp
+                    }
                     onClick={handleSendMail}
                   >
-                    {countdown > 0 ? `Gửi lại mã ${countdown}` : "Gửi mã"}
+                    {sendingOtp
+                      ? "Send otp..."
+                      : countdown > 0
+                      ? `Send otp agian ${countdown}`
+                      : "Send otp"}
                   </Button>
-                  <FormMessage className="text-[#F38C79] font-medium text-base" />
+
+                  <FormMessage className="text-[#F38C79] font-normal" />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" variant={"default"} onClick={handleVerifyOtp}>
-              {loading ? "Loading..." : "Send request"}
+            <Button
+              type="submit"
+              variant={"default"}
+              onClick={handleVerifyOtp}
+              disabled={
+                !otpEnabled ||
+                form.watch("verificationCode").length !== 6 ||
+                verifyingOtp
+              }
+            >
+              {verifyingOtp ? "Loading..." : "Send request"}
             </Button>
           </form>
         </Form>

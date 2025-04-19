@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
-import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
+import {Footer} from "../footer/Footer";
 
 export const MainLayout = () => {
   return (
-    <div>
+    <div className="w-full">
       <Header />
       <Outlet />
       <Footer />

@@ -1,4 +1,4 @@
-import { ForgotPassword, LoginData, LoginGoogle, RegisterData, User, VerifyEmailData } from "@/pages/auth/types/authTypes";
+import { ForgotPassword, LoginData, LoginGoogle, RegisterData, ResetPassword, User, VerifyEmailData } from "@/pages/auth/types/authTypes";
 import api from "./api";
 
 export const login = async (data: LoginData): Promise<User> => {
@@ -35,3 +35,10 @@ export const verifyEmail = async (data: VerifyEmailData): Promise<any> => {
   });
   return response.data;
 };
+
+export const resetPassword = async (data: ResetPassword) : Promise<any> =>{
+     const response = await api.post("auth/forgot-password/reset-password", data, {
+    headers: { Authorization: "" }, 
+  });
+  return response.data;
+}

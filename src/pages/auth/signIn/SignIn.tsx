@@ -48,7 +48,11 @@ const SignIn = () => {
 
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      await dispatch(loginUser(data)).unwrap();
+      const user = await dispatch(loginUser(data)).unwrap();
+      if (user?.token) {
+        localStorage.setItem("token", user.token);
+      }
+
       toast.success("Login successful!");
       navigate("/");
     } catch (err) {
@@ -110,7 +114,7 @@ const SignIn = () => {
               name="email"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel className="text-white font-medium">
+                  <FormLabel className="text-white font-normal">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -118,6 +122,7 @@ const SignIn = () => {
                       type="email"
                       placeholder="Enter your email"
                       {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
@@ -130,7 +135,7 @@ const SignIn = () => {
               name="password"
               render={({ field }) => (
                 <FormItem className="col-span-3">
-                  <FormLabel className="text-white font-medium">
+                  <FormLabel className="text-white font-normal ">
                     Password
                   </FormLabel>
                   <FormControl>
@@ -138,9 +143,10 @@ const SignIn = () => {
                       type="password"
                       placeholder="Enter your password"
                       {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
-                  <FormMessage className="text-[#F38C79] font-medium text-base" />
+                  <FormMessage className="text-[#F38C79] font-normal text-base" />
                 </FormItem>
               )}
             />

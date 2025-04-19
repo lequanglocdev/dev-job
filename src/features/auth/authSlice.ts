@@ -1,7 +1,7 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AuthState, LoginData, RegisterData, ForgotPassword, VerifyEmailData, LoginGoogle} from "@/pages/auth/types/authTypes";
-import { login, register, forgotPassword, verifyEmail, loginGoogle } from "@/apis/authApi";
+import { AuthState, LoginData, RegisterData, ForgotPassword, VerifyEmailData, LoginGoogle, ResetPassword} from "@/pages/auth/types/authTypes";
+import { login, register, forgotPassword, verifyEmail, loginGoogle, resetPassword } from "@/apis/authApi";
 
 const initialState: AuthState = {
   user: null,
@@ -59,7 +59,18 @@ export const verifyEmaildUser = createAsyncThunk(
     try {
       return await verifyEmail(data);
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message || "Registration failed");
+      return rejectWithValue(error.response.data.message || "VerifyEmail failed");
+    }
+  }
+);
+
+export const resetPasswordUser = createAsyncThunk(
+  "auth/resetPassword",
+  async (data: ResetPassword, { rejectWithValue }) => {
+    try {
+      return await resetPassword(data);
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message || "ResetPassword failed");
     }
   }
 );
@@ -137,6 +148,19 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(verifyEmaildUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+        // Xử lý resetpass word 
+      .addCase(resetPasswordUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPasswordUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(resetPasswordUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

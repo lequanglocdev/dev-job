@@ -29,13 +29,14 @@ const SignUp = () => {
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters." }),
+    confirmPassword: z.string().min(6, "Please confirm your password"),
     address: z
       .string()
       .min(6, { message: "Address must be at least 6 characters." }),
     age: z.number().int().min(1).max(99),
     phone: z.string().regex(/^\d+$/).max(10),
     gender: z.enum(["FEMALE", "MALE", "OTHER"], {
-      message: "Gender must be 'nam' or 'nu'.",
+      message: "You have not selected a gender",
     }),
   });
 
@@ -97,7 +98,11 @@ const SignUp = () => {
                     Username
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your username" {...field} />
+                    <Input
+                      placeholder="Enter your username"
+                      {...field}
+                      className="border border-white text-white"
+                    />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
                 </FormItem>
@@ -115,10 +120,13 @@ const SignUp = () => {
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger className="w-full bg-white px-3 py-2 rounded-md shadow-sm border border-gray-300 focus:ring-2 focus:ring-blue-500">
-                      <SelectValue placeholder="Gender" />
+                    <SelectTrigger className="border border-white outline-amber-50 text-white">
+                      <SelectValue
+                        placeholder="Gender"
+                        className="text-white"
+                      />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="outline-amber-50">
                       <SelectItem value="MALE">MALE</SelectItem>
                       <SelectItem value="FEMALE">FEMALE</SelectItem>
                       <SelectItem value="OTHER">OTHER</SelectItem>
@@ -142,6 +150,7 @@ const SignUp = () => {
                       type="text"
                       placeholder="Enter your gender"
                       {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
@@ -157,9 +166,10 @@ const SignUp = () => {
                   <FormLabel className="text-white font-medium">Age</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Enter your age"
                       {...field}
+                      className="border border-white text-white"
                       onChange={(e) =>
                         field.onChange(Number(e.target.value) || "")
                       } // Chuyển về số
@@ -183,6 +193,7 @@ const SignUp = () => {
                       type="text"
                       placeholder="Enter your address"
                       {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
@@ -202,6 +213,7 @@ const SignUp = () => {
                       type="email"
                       placeholder="Enter your email"
                       {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
@@ -222,6 +234,28 @@ const SignUp = () => {
                       type="password"
                       placeholder="Enter your password"
                       {...field}
+                      className="border border-white text-white"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-[#F38C79] font-medium text-base" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem className="col-span-4">
+                  <FormLabel className="text-white font-medium">
+                    confirmPassword
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                      className="border border-white text-white"
                     />
                   </FormControl>
                   <FormMessage className="text-[#F38C79] font-medium text-base" />
